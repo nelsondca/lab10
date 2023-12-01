@@ -1,4 +1,3 @@
-
 const express = require('express')
 const app = express()
 const port = 4000
@@ -40,16 +39,11 @@ const bookSchema = new mongoose.Schema({
 
 const bookModel = mongoose.model('my_books', bookSchema);
 
-app.delete('/api/book/:id', async (req, res) => {
-  console.log("Delete: " + req.params.id);
-
+app.delete('/api/book/:id',async (req, res) => {
+  console.console.log("Delete: " + req.params.id);
+  
   let book = await bookModel.findByIdAndDelete(req.params.id);
   res.send(book);
-
-})
-
-app.put('/api/book/:id', async (req, res) => {
-
 })
 
 app.put('/api/book/:id', async (req, res) => {
@@ -92,8 +86,3 @@ app.get('/api/book/:identifier', async (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
-
-
-//137.116.237.238/32 //My IP Address
-
-//mongodb user account : G00412122 pass: 123456789
