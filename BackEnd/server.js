@@ -4,6 +4,12 @@ const app = express(); // Initialize Express app
 const port = 4000; // Define port
 const cors = require('cors'); // Import CORS for cross-origin resource sharing
 
+//TOO COMMENTT****************************************************************************************************
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../build')));
+app.use('/static', express.static(path.join(__dirname, 'build//static')));
+
+
 // Enable CORS middleware
 app.use(cors());
 
@@ -82,6 +88,11 @@ app.get('/api/book/:identifier', async (req, res) => {
   let book = await bookModel.findById(req.params.identifier); // Find book by ID
   res.send(book); // Send fetched book data in response
 });
+
+//TOO COMMENTT****************************************************************************************************
+app.get('*', (req,res) =>{
+  res.sendFile(path.join(__dirname+'/../build/index.html'));
+  });
 
 // Start the server on specified port
 app.listen(port, () => {
