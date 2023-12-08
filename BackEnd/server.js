@@ -1,88 +1,89 @@
-const express = require('express')
-const app = express()
-const port = 4000
-const cors = require('cors');
+// Import necessary modules
+const express = require('express');
+const app = express(); // Initialize Express app
+const port = 4000; // Define port
+const cors = require('cors'); // Import CORS for cross-origin resource sharing
 
-
+// Enable CORS middleware
 app.use(cors());
+
+// Configure headers for CORS
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Specify allowed methods
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"); // Define allowed headers
   next();
 });
 
+// Import and configure body-parser for handling request data
 const bodyParser = require("body-parser");
-
-//Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-
-// getting-started.js
+// Import and connect to MongoDB using Mongoose
 const mongoose = require('mongoose');
-
 main().catch(err => console.log(err));
 
 async function main() {
   await mongoose.connect('mongodb+srv://admin:admin@martinscluster.w5rtkz0.mongodb.net/DB14?retryWrites=true&w=majority');
-
-  // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
 
+// Define a schema for books
 const bookSchema = new mongoose.Schema({
   title: String,
   cover: String,
   author: String
-})
+});
 
+// Create a model based on the book schema
 const bookModel = mongoose.model('my_books', bookSchema);
 
-app.delete('/api/book/:id',async (req, res) => {
-  console.console.log("Delete: " + req.params.id);
-  
-  let book = await bookModel.findByIdAndDelete(req.params.id);
-  res.send(book);
-})
+// Define DELETE endpoint to delete a book by ID
+app.delete('/api/book/:id', async (req, res) => {
+  console.log("Delete: " + req.params.id);
+  let book = await bookModel.findByIdAndDelete(req.params.id); // Find and delete book by ID
+  res.send(book); // Send deleted book data in response
+});
 
+// Define PUT endpoint to update a book by ID
 app.put('/api/book/:id', async (req, res) => {
-  console.log("update: " + req.params.id);
+  console.log("Update: " + req.params.id);
+  let book = await bookModel.findByIdAndUpdate(req.params.id, req.body, { new: true }); // Find and update book by ID
+  res.send(book); // Send updated book data in response
+});
 
-  let book = await bookModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.send(book); //send back book
-})
-
+// Define POST endpoint to create a new book
 app.post('/api/book', (req, res) => {
   console.log(req.body);
-
+  // Create a new book based on request body data
   bookModel.create({
     title: req.body.title,
     cover: req.body.cover,
     author: req.body.author
   })
-    .then(() => { res.send("Book Created") })
-    .catch(() => { res.send("Book NOT Created") });
+    .then(() => { res.send("Book Created"); }) // Send success message if book is created
+    .catch(() => { res.send("Book NOT Created"); }); // Send error message if book creation fails
+});
 
-})
-
+// Define root route
 app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+  res.send('Hello World!'); // Send 'Hello World!' for root route
+});
 
+// Define GET endpoint to fetch all books
 app.get('/api/books', async (req, res) => {
+  let books = await bookModel.find({}); // Find all books in the database
+  res.json(books); // Send fetched books in JSON format
+});
 
-  let books = await bookModel.find({});
-  res.json(books);
-})
-
+// Define GET endpoint to fetch a book by its ID
 app.get('/api/book/:identifier', async (req, res) => {
   console.log(req.params.identifier);
+  let book = await bookModel.findById(req.params.identifier); // Find book by ID
+  res.send(book); // Send fetched book data in response
+});
 
-  let book = await bookModel.findById(req.params.identifier);
-  res.send(book);
-})
-
+// Start the server on specified port
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});
