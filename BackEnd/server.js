@@ -4,10 +4,9 @@ const app = express(); // Initialize Express app
 const port = 4000; // Define port
 const cors = require('cors'); // Import CORS for cross-origin resource sharing
 
-//TOO COMMENTT****************************************************************************************************
-const path = require('path');
-app.use(express.static(path.join(__dirname, '../build')));
-app.use('/static', express.static(path.join(__dirname, 'build//static')));
+// Import  modules
+const path = require('path'); // Module for handling file paths
+const express = require('express'); // Express framework for Node.js
 
 
 // Enable CORS middleware
@@ -89,10 +88,11 @@ app.get('/api/book/:identifier', async (req, res) => {
   res.send(book); // Send fetched book data in response
 });
 
-//TOO COMMENTT****************************************************************************************************
-app.get('*', (req,res) =>{
-  res.sendFile(path.join(__dirname+'/../build/index.html'));
-  });
+// Handling a wildcard route ('*') for GET requests
+app.get('*', (req, res) => {
+  // Sending the 'index.html' file located in the '../build' directory as a response
+  res.sendFile(path.join(__dirname + '/../build/index.html'));
+});
 
 // Start the server on specified port
 app.listen(port, () => {
